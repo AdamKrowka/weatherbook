@@ -60,15 +60,22 @@ const SearchCity = ({ cityList, findCity, activeCity, setActiveCity }) => {
   const classes = useStyles();
 
   const CityList = cityList.map((city, index) => {
-    return (
-      <Button
-        variant="outlined"
-        color={activeCity === index ? "primary" : ""}
-        className={classes.button}
-      >
-        {city}
-      </Button>
-    );
+    if (cityList)
+      return (
+        <Button
+          key={index}
+          variant="outlined"
+          color={activeCity === city.id ? "primary" : "default"}
+          className={classes.button}
+          value={city.id}
+          onClick={(e) => {
+            setActiveCity(city);
+          }}
+        >
+          {city.name}
+        </Button>
+      );
+    return <></>;
   });
   return (
     <div className={classes.wrapper}>

@@ -1,68 +1,86 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
+const useStyles = makeStyles((theme) => ({
+  container: {
+    // overflowX: "scroll",
+    color: "black",
+    display: "flex",
+    flexDirection: "column",
+    width: "90%",
+    height: "100%",
+    backgroundColor: "#dff5ff",
+    borderRadius: "0px 0px 20px 20px",
+    [theme.breakpoints.down("xs")]: {
+      width: "100%",
+      borderRadius: 0,
+    },
   },
-});
+  row: {
+    display: "flex",
+    flex: 1,
+  },
+  head: {
+    display: "flex",
+    flex: 1,
+    fontWeight: "bold",
+    paddingTop: theme.spacing(1),
+  },
+  tile: {
+    // paddingLeft: theme.spacing(1),
+    flex: 1,
+    display: "flex",
+  },
+  img: {
+    maxHeight: "30px",
+  },
+}));
 
-function createData(day, weather, morning, evening, night, humidity, pressure) {
-  return { day, weather, morning, evening, night, humidity, pressure };
-}
+const getDate = (dt) => new Date(dt * 1000).getDay();
 
-const rows = [
-  createData("Monday", "Sunny", "8'C", "12'C", "6'C", "60%", "1000hpa"),
-  createData("Monday", "Sunny", "8'C", "12'C", "6'C", "60%", "1000hpa"),
-  createData("Monday", "Sunny", "8'C", "12'C", "6'C", "60%", "1000hpa"),
-  createData("Monday", "Sunny", "8'C", "12'C", "6'C", "60%", "1000hpa"),
-  createData("Monday", "Sunny", "8'C", "12'C", "6'C", "60%", "1000hpa"),
-  createData("Monday", "Sunny", "8'C", "12'C", "6'C", "60%", "1000hpa"),
-  createData("Monday", "Sunny", "8'C", "12'C", "6'C", "60%", "1000hpa"),
-];
+const getDayofWeek = (dt) =>
+  [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ][getDate(dt)];
 
-export default function SimpleTable() {
+export default function SimpleTable({ data }) {
   const classes = useStyles();
+  data.shift();
+  const dataRows = data.map((row, index) => (
+    <div key={index} className={classes.row}>
+      <div className={classes.tile}>{getDayofWeek(row.dt)}</div>
+      <div className={classes.tile}>
+        <img
+          className={classes.img}
+          src={`http://openweathermap.org/img/wn/${row.weather[0].icon}@2x.png`}
+          alt={`${row.weather[0].main}`}
+        />
+        {row.weather[0].main}
+      </div>
+      <div className={classes.tile}>{row.temp.day.toFixed()}°C</div>
+      <div className={classes.tile}>{row.temp.night.toFixed()}°C</div>
+      <div className={classes.tile}>{row.humidity}%</div>
+      <div className={classes.tile}>{row.pressure}hpa</div>
+    </div>
+  ));
 
   return (
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Day</TableCell>
-            <TableCell align="right">Weather</TableCell>
-            <TableCell align="right">Morning</TableCell>
-            <TableCell align="right">Day</TableCell>
-            <TableCell align="right">Evening</TableCell>
-            <TableCell align="right">Night</TableCell>
-            <TableCell align="right">Humidity</TableCell>
-            <TableCell align="right">Pressure</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.day}</TableCell>
-              <TableCell align="right">{row.weather}</TableCell>
-              <TableCell align="right">{row.morning}</TableCell>
-              <TableCell align="right">{row.evening}</TableCell>
-              <TableCell align="right">{row.night}</TableCell>
-              <TableCell align="right">{row.humidity}</TableCell>
-              <TableCell align="right">{row.pressure}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <div className={classes.container}>
+      <div className={classes.head}>
+        <div className={classes.tile}>Day</div>
+        <div className={classes.tile}>Weather</div>
+        <div className={classes.tile}>Day</div>
+        <div className={classes.tile}>Night</div>
+        <div className={classes.tile}>Humidity</div>
+        <div className={classes.tile}>Pressure</div>
+      </div>
+      {dataRows}
+    </div>
   );
 }

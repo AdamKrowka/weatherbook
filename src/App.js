@@ -1,11 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid } from "@material-ui/core";
-import SearchCity from "./Components/SearchCity.js";
-import CityInfo from "./Components/CityInfo.js";
-import weatherData from "./Data.json";
-
-console.log(weatherData);
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import Logged from "./Components/Logged.js";
+import Login from "./Components/Login.js";
 
 const useStyles = makeStyles((theme) => ({
   appWrapper: {
@@ -22,69 +19,24 @@ const useStyles = makeStyles((theme) => ({
       padding: 0,
     },
   },
-  innerWrapper: {
-    backgroundColor: "#dff5ff",
-    width: "100%",
-    height: "80vh",
-    borderRadius: 20,
-    display: "flex",
-    [theme.breakpoints.down("xs")]: {
-      minHeight: "100vh",
-      borderRadius: 0,
-    },
-  },
-  gridContainer: {
-    [theme.breakpoints.down("xs")]: {
-      minHeight: "100vh",
-    },
-  },
-  citySearch: {},
-  cityData: {},
 }));
 
 function App() {
   const classes = useStyles();
+  const [user, setUser] = useState();
+
   return (
     <div className={classes.appWrapper}>
-      <div className={classes.innerWrapper}>
-        <Grid container className={classes.gridContainer}>
-          <Grid className={classes.cityData} item xs={12} sm={9}>
-            <CityInfo weatherData={weatherData} city={"Warszawa"}></CityInfo>
-          </Grid>
-          <Grid className={classes.citySearch} item xs={12} sm={3}>
-            <SearchCity
-              cityList={[
-                "Warszawa",
-                "Poznań",
-                "Kraków",
-                "Poznań",
-                "Poznań",
-                "Kraków",
-                "Poznań",
-                "Poznań",
-                "Kraków",
-                "Poznań",
-                "Poznań",
-                "Kraków",
-                "Poznań",
-                "Poznań",
-                "Kraków",
-                "Poznań",
-                "Poznań",
-                "Kraków",
-                "Poznań",
-                "Poznań",
-                "Kraków",
-                "Poznań",
-                "Poznań",
-                "Kraków",
-                "Poznań",
-              ]}
-              activeCity={2}
-            ></SearchCity>
-          </Grid>
-        </Grid>
-      </div>
+      <Router>
+        <Switch>
+          <Route exact path="/logged">
+            <Logged user={user} />
+          </Route>
+          <Route exact path="/">
+            <Login setUser={setUser} />
+          </Route>
+        </Switch>
+      </Router>
     </div>
   );
 }

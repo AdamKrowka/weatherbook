@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Avatar, Button } from "@material-ui/core";
+import { Avatar, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { blue } from "@material-ui/core/colors";
 import Chart from "./Chart.js";
@@ -62,41 +62,82 @@ const useStyles = makeStyles((theme) => ({
     },
     // table:,
   },
-  text: {},
+  header: {
+    paddingTop: theme.spacing(1),
+  },
+  date: {
+    fontSize: "0.7rem",
+  },
+  temp: { fontSize: "5rem" },
   table: {
     display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     width: "100%",
     flex: 1,
+    padding: theme.spacing(2),
+    [theme.breakpoints.down("xs")]: {
+      padding: 0,
+    },
   },
 }));
 
-const Cityinfo = ({ weatherData, city }) => {
-  const date = new Date(weatherData.current.dt * 1000);
-  const today = date.toString().split(" ").slice(0, 4).join(" ");
-  console.log(today);
+const Cityinfo = ({ weatherData, city, handleLogOut }) => {
   const classes = useStyles();
+  let today = "";
+  if (weatherData) {
+    const date = new Date(weatherData.current.dt * 1000);
+    today = date.toString().split(" ").slice(0, 4).join(" ");
+  }
   return (
     <div className={classes.container}>
       <div className={classes.accountBar}>
-        <Avatar className={classes.avatar}>AK</Avatar>
-        <Button className={classes.button} variant="contained" color="primary">
+        <Avatar className={classes.avatar}>A</Avatar>
+        <Button
+          className={classes.button}
+          variant="contained"
+          color="primary"
+          onClick={handleLogOut}
+        >
           LOG OUT
         </Button>
       </div>
       <div className={classes.cityInfo}>
         <div className={classes.innerContainer}>
           <div className={classes.darkBgContainer}>
-            <div className={classes.text}>Today</div>
-            <div className={classes.text}>{today}</div>
-            <div className={classes.text}>
-              {weatherData.current.temp.toFixed()}
+            <div className={classes.header}>Today</div>
+            <div className={classes.date}>{today}</div>
+            <div className={classes.temp}>
+              {weatherData ? (
+                <img
+                  className={classes.img}
+                  src={`http://openweathermap.org/img/wn/${weatherData.current.weather[0].icon}@2x.png`}
+                  alt={`${weatherData.current.weather[0].main}`}
+                />
+              ) : (
+                <></>
+              )}
+              {weatherData ? weatherData.current.temp.toFixed() : 0}°C
+              {weatherData ? (
+                <img
+                  className={classes.img}
+                  src={`http://openweathermap.org/img/wn/${weatherData.current.weather[0].icon}@2x.png`}
+                  alt={`${weatherData.current.weather[0].main}`}
+                />
+              ) : (
+                <></>
+              )}
             </div>
             <div className={classes.text}>{city}</div>
             <div className={classes.chart}>
-              <Chart></Chart>
+              {weatherData ? (
+                <Chart weatherData={weatherData.hourly}></Chart>
+              ) : (
+                <></>
+              )}
             </div>
             <div className={classes.table}>
-              <Table></Table>
+              {weatherData ? <Table data={weatherData.daily}></Table> : <></>}
             </div>
           </div>
         </div>
