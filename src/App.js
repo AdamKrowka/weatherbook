@@ -4,6 +4,7 @@ import { Grid } from "@material-ui/core";
 import SearchCity from "./Components/SearchCity.js";
 import CityInfo from "./Components/CityInfo.js";
 import weatherData from "./Data.json";
+
 console.log(weatherData);
 
 const useStyles = makeStyles((theme) => ({
