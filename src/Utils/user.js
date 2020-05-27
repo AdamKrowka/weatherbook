@@ -39,10 +39,19 @@ export const validate = (login, password) => {
 export const addCity = (city, userID) => {
   const user = users.find((u) => u.id === userID);
   user.cities.push(city);
+  return user.cities;
 };
 
 export const deleteCity = (city, userID) => {
-  const user = users.findIndex((u) => u.id === userID);
-  const index = user.cities.find((c) => c.id === city.id);
+  const user = users.find((u) => u.id === userID);
+  const index = user.cities.findIndex((c) => c.id === city.id);
   user.cities.splice(index, 1);
+
+  return user.cities;
+};
+
+export const isOnList = (city, userID) => {
+  const user = users.find((u) => u.id === userID);
+  const index = user.cities.find((c) => c.id === city.id);
+  return index ? true : false;
 };
