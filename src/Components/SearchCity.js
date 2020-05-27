@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SearchCity = ({ cityList, activeCity, setActiveCity }) => {
   const classes = useStyles();
-  const [cityListBtn, setCityListBtn] = useState(cityList);
+  const [cityListBtn] = useState(cityList);
   const setSelectedCity = (city) => {
     setActiveCity(city);
   };
