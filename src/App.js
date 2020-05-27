@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Logged from "./Components/Logged.js";
 import Login from "./Components/Login.js";
+import PageNotFound from "./Components/PageNotFound.js";
 
 const useStyles = makeStyles((theme) => ({
   appWrapper: {
@@ -34,6 +35,9 @@ function App() {
           </Route>
           <Route exact path="/">
             <Login setUser={setUser} />
+          </Route>
+          <Route path="/">
+            <PageNotFound />
           </Route>
         </Switch>
       </Router>

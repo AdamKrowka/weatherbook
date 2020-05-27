@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Avatar, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { blue } from "@material-ui/core/colors";
 import Chart from "./Chart.js";
 import Table from "./Table.js";
+import { isOnList } from "../Utils/user.js";
 const useStyles = makeStyles((theme) => ({
   container: {
     height: "100%",
@@ -45,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     height: "100%",
     display: "flex",
+    position: "relative",
     flexDirection: "column",
     alignItems: "center",
     backgroundColor: "#1a214a",
@@ -55,12 +57,9 @@ const useStyles = makeStyles((theme) => ({
   },
   chart: {
     width: "80%",
-    // height: "50vh",
     [theme.breakpoints.down("xs")]: {
-      // height: "20vh",
       width: "100%",
     },
-    // table:,
   },
   header: {
     paddingTop: theme.spacing(1),
@@ -80,10 +79,26 @@ const useStyles = makeStyles((theme) => ({
       padding: 0,
     },
   },
+  star: {
+    position: "absolute",
+    top: theme.spacing(1),
+    right: theme.spacing(1),
+  },
 }));
 
-const Cityinfo = ({ weatherData, city, handleLogOut }) => {
+const Cityinfo = ({
+  weatherData,
+  city,
+  handleLogOut,
+  userID,
+  addCity,
+  deleteCity,
+}) => {
   const classes = useStyles();
+  const handleClick = () => {
+    isOnList(city, userID) ? deleteCity(city) : addCity(city);
+  };
+
   let today = "";
   if (weatherData) {
     const date = new Date(weatherData.current.dt * 1000);
@@ -105,6 +120,11 @@ const Cityinfo = ({ weatherData, city, handleLogOut }) => {
       <div className={classes.cityInfo}>
         <div className={classes.innerContainer}>
           <div className={classes.darkBgContainer}>
+            <div className={classes.star}>
+              <Button variant="outlined" color="primary" onClick={handleClick}>
+                {isOnList(city, userID) ? "Delete" : "Observe"}
+              </Button>
+            </div>
             <div className={classes.header}>Today</div>
             <div className={classes.date}>{today}</div>
             <div className={classes.temp}>
@@ -128,7 +148,7 @@ const Cityinfo = ({ weatherData, city, handleLogOut }) => {
                 <></>
               )}
             </div>
-            <div className={classes.text}>{city}</div>
+            <div className={classes.text}>{city.name}</div>
             <div className={classes.chart}>
               {weatherData ? (
                 <Chart weatherData={weatherData.hourly}></Chart>

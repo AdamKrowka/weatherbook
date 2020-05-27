@@ -5,6 +5,7 @@ import SearchCity from "./SearchCity.js";
 import CityInfo from "./CityInfo.js";
 import { getData } from "../Utils/WeatherData.js";
 import { useHistory } from "react-router-dom";
+import { addCity, deleteCity } from "../Utils/user.js";
 
 const useStyles = makeStyles((theme) => ({
   innerWrapper: {
@@ -25,6 +26,14 @@ const useStyles = makeStyles((theme) => ({
   },
   citySearch: {},
   cityData: {},
+  notLogged: {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "column",
+  },
 }));
 
 function Logged({ user, setUser }) {
@@ -40,16 +49,10 @@ function Logged({ user, setUser }) {
     },
   });
   const [weatherData, setWeatherData] = useState();
+  const [cityList, setCityList] = useState(user ? user.cities : []);
   const handleLogOut = () => {
     history.push("/");
   };
-  useEffect(() => {
-    const dataAsync = async () => {
-      const data = await getData(selectedCity);
-      setWeatherData(data);
-    };
-    dataAsync();
-  }, []);
   useEffect(() => {
     const dataAsync = async () => {
       const data = await getData(selectedCity);
@@ -61,6 +64,26 @@ function Logged({ user, setUser }) {
   const handleClick = () => {
     history.push("/");
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const dataAsync = async () => {
+        const data = await getData(selectedCity);
+        setWeatherData(data);
+      };
+      dataAsync();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [selectedCity]);
+
+  const handleAddCity = (city) => {
+    setCityList(addCity(city, user.id));
+    setSelectedCity({ ...selectedCity });
+  };
+  const handleDeleteCity = (city) => {
+    setCityList(deleteCity(city, user.id));
+    setSelectedCity({ ...selectedCity });
+  };
   const classes = useStyles();
   if (user)
     return (
@@ -69,13 +92,16 @@ function Logged({ user, setUser }) {
           <Grid className={classes.cityData} item xs={12} sm={9}>
             <CityInfo
               weatherData={weatherData}
-              city={selectedCity.name}
+              city={selectedCity}
               handleLogOut={handleLogOut}
+              userID={1}
+              addCity={handleAddCity}
+              deleteCity={handleDeleteCity}
             ></CityInfo>
           </Grid>
           <Grid className={classes.citySearch} item xs={12} sm={3}>
             <SearchCity
-              cityList={user ? user.cities : []}
+              cityList={cityList}
               activeCity={selectedCity.id}
               setActiveCity={setSelectedCity}
             ></SearchCity>
@@ -84,13 +110,14 @@ function Logged({ user, setUser }) {
       </div>
     );
   return (
-    <>
-      <h1>You are not logged in</h1>
-      <div> </div>
-      <Button variant="outlined" onClick={handleClick}>
-        Log in
-      </Button>
-    </>
+    <div className={classes.innerWrapper}>
+      <div className={classes.notLogged}>
+        <h1>You are not logged in</h1>
+        <Button variant="outlined" onClick={handleClick}>
+          Log in
+        </Button>
+      </div>
+    </div>
   );
 }
 

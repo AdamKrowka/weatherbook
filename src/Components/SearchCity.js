@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, InputBase, Button } from "@material-ui/core";
-import SearchIcon from "@material-ui/icons/Search";
+import { Button } from "@material-ui/core";
+import CitySearchField from "./CitySearchField.js";
+import cities from "../Utils/city.list.json";
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -56,10 +57,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SearchCity = ({ cityList, findCity, activeCity, setActiveCity }) => {
+const SearchCity = ({ cityList, activeCity, setActiveCity }) => {
   const classes = useStyles();
+  const [cityListBtn, setCityListBtn] = useState(cityList);
+  const setSelectedCity = (city) => {
+    setActiveCity(city);
+  };
 
-  const CityList = cityList.map((city, index) => {
+  const CityList = cityListBtn.map((city, index) => {
     if (cityList)
       return (
         <Button
@@ -79,19 +84,10 @@ const SearchCity = ({ cityList, findCity, activeCity, setActiveCity }) => {
   });
   return (
     <div className={classes.wrapper}>
-      <Grid
-        className={classes.input}
-        container
-        spacing={1}
-        alignItems="flex-end"
-      >
-        <Grid item className={classes.icon}>
-          <SearchIcon />
-        </Grid>
-        <Grid item className={classes.inp}>
-          <InputBase className={classes.textInput} defaultValue="Find City" />
-        </Grid>
-      </Grid>
+      <CitySearchField
+        cities={cities}
+        setSelectedCity={setSelectedCity}
+      ></CitySearchField>
       <div className={classes.cityList}>{CityList}</div>
     </div>
   );
